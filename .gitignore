@@ -3,6 +3,7 @@
 *.ko
 *.obj
 *.elf
+*.so
 
 # Precompiled Headers
 *.gch
@@ -31,3 +32,7 @@
 # Debug files
 *.dSYM/
 *.su
+
+build/
+*~
+.DS_Store
