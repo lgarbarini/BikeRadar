@@ -41,27 +41,27 @@
 
 
 void write_byte(uint16_t adData) {
-   //
-   clear(PORTB, clk);
-   low_delay();
-   if ((512 & adData) != 0)     set(PORTB, bit9);
-   if ((256 & adData) != 0)     set(PORTB, bit8);
-   if ((128 & adData) != 0)     set(PORTB, bit7);
-   if ((64 & adData) != 0)      set(PORTB, bit6);
-   if ((32 & adData) != 0)      set(PORTB, bit5);
-   if ((16 & adData) != 0)      set(PORTD, bit4);
-   if ((8 & adData) != 0)       set(PORTD, bit3);
-   if ((4 & adData) != 0)       set(PORTD, bit2);
-   if ((2 & adData) != 0)       set(PORTD, bit1);
-   if ((1 & adData) != 0)       set(PORTD, bit0);
-   set(PORTB, clk);
+    //
+    clear(PORTB, clk);
+    low_delay();
+    if ((512 & adData) != 0)     set(PORTB, bit9);
+    if ((256 & adData) != 0)     set(PORTB, bit8);
+    if ((128 & adData) != 0)     set(PORTB, bit7);
+    if ((64 & adData) != 0)      set(PORTB, bit6);
+    if ((32 & adData) != 0)      set(PORTB, bit5);
+    if ((16 & adData) != 0)      set(PORTD, bit4);
+    if ((8 & adData) != 0)       set(PORTD, bit3);
+    if ((4 & adData) != 0)       set(PORTD, bit2);
+    if ((2 & adData) != 0)       set(PORTD, bit1);
+    if ((1 & adData) != 0)       set(PORTD, bit0);
+    set(PORTB, clk);
 }
 
 int main(void) {
    //
    // main
+   int i = 0;
    //
-   static uint16_t data;
    //
    // set clock divider to /1
    //
@@ -75,7 +75,7 @@ int main(void) {
    //
    // init A/D
    //
-   ADMUX = (0 << REFS2) | (0 << REFS1) | (0 << REFS0) // Vcc ref
+   ADMUX = (0 << REFS1) | (0 << REFS0) // Vcc ref
       | (0 << ADLAR) // right adjust
       | (0 << MUX3) | (0 << MUX2) | (1 << MUX1) | (0 << MUX0); // ADC4
    ADCSRA = (1 << ADEN) // enable
@@ -84,8 +84,10 @@ int main(void) {
    // main loop
    //
    while (1) {
-       for(int i = 0; i < 4; i++) {
-           ADMUX &= (0xF0 | i);
+       for(i = 0; i < 4; i++) {
+           ADCSRA |= (0 << ADEN); //disable ADC
+           ADMUX &= (0xF0 | i);  //set input channel
+           ADCSRA |= (1 << ADEN); //enable ADC
            ADCSRA |= (1 << ADSC);
            //
            // wait for completion
